@@ -21,16 +21,20 @@ namespace PokemonReviewApp.Repository
 
             var pokemonOwner = new PokemonOwner()
             {
-                Owner = pokemonOwnerEntity,
+                PokemonId = pokemon.Id,
+                OwnerId = pokemonOwnerEntity.Id,
                 Pokemon = pokemon,
+                Owner = pokemonOwnerEntity,
             };
 
             _context.Add(pokemonOwner);
 
             var pokemonCategory = new PokemonCategory()
             {
-                Category = category,
+                PokemonId = pokemon.Id,
+                CategoryId = category.Id,
                 Pokemon = pokemon,
+                Category = category,
             };
 
             _context.Add(pokemonCategory);

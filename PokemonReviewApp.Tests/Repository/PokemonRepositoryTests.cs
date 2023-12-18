@@ -46,8 +46,8 @@ namespace PokemonReviewApp.Tests.Repository
                                 Reviewer = new Reviewer(){ FirstName = "Jessica", LastName = "McGregor" } },
                             }
                     });
-                    await databaseContext.SaveChangesAsync();
                 }
+                    await databaseContext.SaveChangesAsync();
             }
             return databaseContext;
         }

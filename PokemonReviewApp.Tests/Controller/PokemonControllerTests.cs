@@ -44,27 +44,48 @@ namespace PokemonReviewApp.Tests.Controller
             result.Should().BeOfType(typeof(OkObjectResult));
         }
 
-        [Fact]
-        public void PokemonController_CreatePokemon_ReturnOK()
+
+
+
+
+
+        [Theory]
+        [InlineData(1, 10)]
+        public void PokemonController_CreatePokemon_ReturnsOk(int ownerId, int catId)
         {
-            //Arrange
-            int ownerId = 1;
-            int catId = 2;
+            PokemonDto pokemonCreate = A.Fake<PokemonDto>();
             var pokemonMap = A.Fake<Pokemon>();
-            var pokemon = A.Fake<Pokemon>();
-            var pokemonCreate = A.Fake<PokemonDto>();
-            var pokemons = A.Fake<ICollection<PokemonDto>>();
-            var pokmonList = A.Fake<IList<PokemonDto>>();
-            A.CallTo(() => _pokemonRepository.GetPokemonTrimToUpper(pokemonCreate)).Returns(pokemon);
-            A.CallTo(() => _mapper.Map<Pokemon>(pokemonCreate)).Returns(pokemon);
+            A.CallTo(() => _pokemonRepository.GetPokemonTrimToUpper(pokemonCreate)).Returns(null);
+            A.CallTo(() => _mapper.Map<Pokemon>(pokemonCreate)).Returns(pokemonMap);
             A.CallTo(() => _pokemonRepository.CreatePokemon(ownerId, catId, pokemonMap)).Returns(true);
             var controller = new PokemonController(_pokemonRepository, _reviewRepository, _mapper);
 
-            //Act
             var result = controller.CreatePokemon(ownerId, catId, pokemonCreate);
 
-            //Assert
             result.Should().NotBeNull();
+            result.Should().BeOfType(typeof(OkObjectResult));
         }
+
+        [Fact]
+        public void PokemonController_CreatePokemon_Returns422()
+        {
+            int ownerId = 1;
+            int catId = 5;
+            PokemonDto pokemonCreate = A.Fake<PokemonDto>();
+            Pokemon pokemonMap = A.Fake<Pokemon>();
+            var pokemon = A.Fake<Pokemon>();
+            A.CallTo(() => _pokemonRepository.GetPokemonTrimToUpper(pokemonCreate)).Returns(pokemon);
+            A.CallTo(() => _mapper.Map<Pokemon>(pokemonCreate)).Returns(pokemonMap);
+            A.CallTo(() => _pokemonRepository.CreatePokemon(ownerId, catId, pokemonMap)).Returns(true);
+            var controller = new PokemonController(_pokemonRepository, _reviewRepository, _mapper);
+
+            var result = controller.CreatePokemon(ownerId, catId, pokemonCreate);
+
+
+            result.Should().NotBeNull();
+            var objectResult = result.Should().BeOfType<ObjectResult>().Subject;
+            objectResult.StatusCode.Should().Be(422);
+        }
+
     }
 }
